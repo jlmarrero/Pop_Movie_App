@@ -138,8 +138,6 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-
     @TargetApi(Build.VERSION_CODES.CUPCAKE)
     public class FetchMovieTask extends AsyncTask<Void, Void, Movie[]> {
 
@@ -208,7 +206,7 @@ public class MainActivity extends ActionBarActivity {
                 // Construct the URL for the OpenWeatherMap query
                 // Possible parameters are available at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
-                URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=dd57411618238db8fbe81ec21bd45357\n");
+                URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=XXXX\n");
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
