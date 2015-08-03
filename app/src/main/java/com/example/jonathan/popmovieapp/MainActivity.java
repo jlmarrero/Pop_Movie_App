@@ -2,6 +2,7 @@ package com.example.jonathan.popmovieapp;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,14 +37,6 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            movieList = (Movie[]) savedInstanceState.getParcelableArray("MovieList");
-        } else {
-            updateMovie();
-        }
-
-
         setContentView(R.layout.activity_main);
         GridView gridview = (GridView) findViewById(R.id.gridview);
 
@@ -77,7 +70,8 @@ public class MainActivity extends ActionBarActivity {
         // SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         // String location = prefs.getString(getString(R.string.pref_location_key),
         //        getString(R.string.pref_default_location));
-        updateMovies.execute();
+        updateMovies.execute("POPULARITY");
+
     }
 
     @Override
@@ -103,25 +97,17 @@ public class MainActivity extends ActionBarActivity {
             //Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
             //toast.show();
             FetchMovieTask movieTask = new FetchMovieTask();
-            movieTask.execute();
+            movieTask.execute("HIGH_RATING");
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        // Save the user's current game state
-        savedInstanceState.putParcelableArray("MovieList", movieList);
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
     @TargetApi(Build.VERSION_CODES.CUPCAKE)
-    public class FetchMovieTask extends AsyncTask<Void, Void, Movie[]> {
+    public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
 
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
-        private final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w185";
 
         private Movie[] getMovieDataFromJson(String movieJsonStr) throws JSONException {
 
@@ -129,16 +115,13 @@ public class MainActivity extends ActionBarActivity {
             JSONArray jArray = jData.getJSONArray("results");
             Movie[] movieArray = new Movie[jArray.length()];
 
-            for (int i=0; i < jArray.length(); i++){
+            for (int i = 0; i < jArray.length(); i++) {
 
                 JSONObject jActualMovie = jArray.getJSONObject(i);
 
                 String id = jActualMovie.getString("id");
                 String title = jActualMovie.getString("title");
-                String posterPath = jActualMovie.getString("poster_path");
-                posterPath = BASE_POSTER_URL + posterPath;
-
-                // Log.v("POSTER PATH: ", posterPath);
+                String posterPath = "http://image.tmdb.org/t/p/w185" + jActualMovie.getString("poster_path");
 
                 String release = jActualMovie.getString("release_date");
 
@@ -154,7 +137,7 @@ public class MainActivity extends ActionBarActivity {
 
                 String vote_average = jActualMovie.getString("vote_average");
 
-                // Log.v("VOTE: ", vote_average);
+                Log.v("VOTE: ", vote_average);
 
                 Movie m = new Movie(id, title, popularity, overview, posterPath,
                         release, vote_average);
@@ -165,7 +148,7 @@ public class MainActivity extends ActionBarActivity {
                 // Log.v("Sample MOVIE: ", movieArray[0].toString());
             }
 
-            if (movieArray == null){
+            if (movieArray == null) {
                 return null;
             } else {
                 return movieArray;
@@ -173,7 +156,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         @Override
-        protected Movie[] doInBackground(Void... params) {
+        protected Movie[] doInBackground(String... params) {
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
@@ -181,11 +164,33 @@ public class MainActivity extends ActionBarActivity {
             // Will contain the raw JSON response as a string.
             String movieJsonStr = null;
 
+            final String BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
+            final String QUERY_PARAM = "sort_by";
+            final String API_PARAM = "api_key";
+            String api_key = "xxx";
+            String sort_by = "";
+
             try {
-                // Construct the URL for the OpenWeatherMap query
-                // Possible parameters are available at OWM's forecast API page, at
-                // http://openweathermap.org/API#forecast
-                URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=xxxx\n");
+                if (params[0] == null) {
+                    return null;
+                } else if (params[0] == "POPULARITY") {
+                    sort_by = "popularity.desc";
+                    Log.v("SORT PARAM: ", sort_by);
+                } else if (params[0] == "HIGH_RATING") {
+                    sort_by = "vote_average.desc";
+                    Log.v("SORT PARAM: ", sort_by);
+                }
+
+
+                Uri buildUri = Uri.parse(BASE_URL).buildUpon()
+                        .appendQueryParameter(QUERY_PARAM, sort_by)
+                        .appendQueryParameter(API_PARAM, api_key)
+                        .build();
+
+                URL url = new URL(buildUri.toString());
+
+                Log.v("MY NEW URL: ", url.toString());
+
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -218,7 +223,7 @@ public class MainActivity extends ActionBarActivity {
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
                 movieJsonStr = null;
-            } finally{
+            } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
                 }
@@ -252,16 +257,16 @@ public class MainActivity extends ActionBarActivity {
             if (result != null) {
                 Log.v("MORE JSON: ", result[0].toString());
                 movieList = result;
-                for(int i = 0; i <result.length; i++){
-                    urlArray[i] = result[i].getPoster_path();
+                for (int i = 0; i < movieList.length; i++) {
+
+                    urlArray[i] = movieList[i].getPoster_path();
                 }
 
-                Log.v("URL STRING: ", result[0].getPoster_path());
+                Log.v("URL STRING3: ", urlArray[0]);
 
                 grid = (GridView) findViewById(R.id.gridview);
                 ImageAdapter adapter = new ImageAdapter(MainActivity.this, urlArray);
                 grid.setAdapter(adapter);
-
 
             }
         }

@@ -44,10 +44,13 @@ public class MovieDescriptionFragment extends Fragment {
 
             //Movie movie = intent.getExtras().getParcelable("b");
             //Movie movie = intent.getParcelableExtra("b");
-            Log.v("THIS MOVIE: ", movie.getDescription());
+            Log.v("THIS MO!!!!!! : ", movie.getVote_average());
 
             // String descStr = array[1];
             // String rating = array[2];
+
+            ImageView image = (ImageView) rootView.findViewById(R.id.descImageView);
+            Picasso.with(getActivity()).load(movie.getPoster_path()).into(image);
 
             ((TextView) rootView.findViewById(R.id.textView))
                     .setText(movie.getDescription());
@@ -55,8 +58,8 @@ public class MovieDescriptionFragment extends Fragment {
             ((TextView) rootView.findViewById(R.id.textView2))
                     .setText(movie.getTitle());
 
-            ImageView image = (ImageView) rootView.findViewById(R.id.descImageView);
-            Picasso.with(getActivity()).load(movie.getPoster_path()).into(image);
+            ((TextView) rootView.findViewById(R.id.textView4)).setText("Rating: " + movie.getPopularity());
+
 
             // if (intent != null) {
             //    String url = movie.getTitle();

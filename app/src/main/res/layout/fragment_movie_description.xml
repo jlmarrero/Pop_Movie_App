@@ -11,13 +11,13 @@
 
     <ImageView
         android:id="@+id/descImageView"
-        android:layout_width="185dp"
-        android:layout_height="185dp"
+        android:layout_width="195dp"
+        android:layout_height="195dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:maxHeight="45dp"
-        android:maxWidth="45dp"
+        android:maxHeight="185dp"
+        android:maxWidth="185dp"
         android:src="@drawable/sample_5" />
 
 
@@ -25,22 +25,32 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="New Text"
+        android:paddingTop="20dp"
+        android:textSize="20sp"
+        android:textIsSelectable="true"
+        android:layout_below="@+id/descImageView"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
-        android:text="New Text" />
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="36dp"
-        android:layout_toEndOf="@+id/descImageView"
-        android:layout_toRightOf="@+id/descImageView"
         android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_alignBottom="@+id/descImageView"
+        android:layout_toEndOf="@+id/descImageView"
+        android:layout_toRightOf="@+id/descImageView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/textView4"
+        android:layout_alignTop="@+id/descImageView"
+        android:layout_toRightOf="@+id/descImageView"
+        android:layout_toEndOf="@+id/descImageView"
+        android:textSize="16sp"/>
 
 </RelativeLayout>
