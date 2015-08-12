@@ -38,16 +38,7 @@ public class MovieDescriptionFragment extends Fragment {
         if(movie == null){
             Log.v("THIS MOVIE: ", "IS EMPTY!!!!!!!!!!!!!!!!!!!!!!!!!!");
         } else {
-            // String[] array = b.getStringArray("movie");
-
-            //Intent intent = new Intent();
-
-            //Movie movie = intent.getExtras().getParcelable("b");
-            //Movie movie = intent.getParcelableExtra("b");
-            Log.v("THIS MO!!!!!! : ", movie.getVote_average());
-
-            // String descStr = array[1];
-            // String rating = array[2];
+            Log.v("THIS MOVIE ELSE: ", movie.getVote_average());
 
             ImageView image = (ImageView) rootView.findViewById(R.id.descImageView);
             Picasso.with(getActivity()).load(movie.getPoster_path()).into(image);
@@ -59,15 +50,9 @@ public class MovieDescriptionFragment extends Fragment {
                     .setText(movie.getTitle());
 
             ((TextView) rootView.findViewById(R.id.textView4)).setText("Rating: " + movie.getPopularity());
-
-
-            // if (intent != null) {
-            //    String url = movie.getTitle();
-
-            //     Picasso.with(getActivity()).load(url).into(image);
-            // }
         }
 
         return rootView;
     }
+
 }

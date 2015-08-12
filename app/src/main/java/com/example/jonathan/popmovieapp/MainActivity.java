@@ -1,18 +1,17 @@
 package com.example.jonathan.popmovieapp;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
 import org.json.JSONArray;
@@ -25,12 +24,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
-    private ArrayList<Movie> movies;
-    private ArrayAdapter<String> movieArrayAdapter;
     private GridView grid;
     private Movie[] movieList;
 
@@ -39,11 +35,12 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         GridView gridview = (GridView) findViewById(R.id.gridview);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        PreferenceManager.setDefaultValues(getApplication(), R.xml.pref_general, true);
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-
                 Movie movieToPass = movieList[position];
 
                 Intent intent = new Intent(getApplication(), MovieDescription.class);
@@ -65,12 +62,18 @@ public class MainActivity extends ActionBarActivity {
 
     private void updateMovie() {
         FetchMovieTask updateMovies = new FetchMovieTask();
-        // This section updates the location preference by instantiating an object
-        // of the SharedPreferences class
-        // SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        // String location = prefs.getString(getString(R.string.pref_location_key),
-        //        getString(R.string.pref_default_location));
-        updateMovies.execute("POPULARITY");
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean syncConnPref = sharedPref.getBoolean(getString(R.string.pref_sort_by), false);
+
+        Log.v("SHARED PREF: ", String.valueOf(syncConnPref));
+
+        String pref = "";
+        if (syncConnPref){
+            pref = "POPULARITY";
+        } else if(!syncConnPref) {
+            pref = "HIGH_RATING";
+        }
+        updateMovies.execute(pref);
 
     }
 
@@ -90,21 +93,31 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
         if (id == R.id.action_refresh) {
+
             //String message = "Refreshing...";
             //Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
             //toast.show();
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+            boolean syncConnPref = sharedPref.getBoolean(String.valueOf(SettingsActivity.KEY_SORT_PREF), false);
+            String pref = "";
+
+            if (syncConnPref){
+                pref = "POPULARITY";
+            } else if(!syncConnPref) {
+                pref = "HIGH_RATING";
+            }
             FetchMovieTask movieTask = new FetchMovieTask();
-            movieTask.execute("HIGH_RATING");
+            movieTask.execute(pref);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    @TargetApi(Build.VERSION_CODES.CUPCAKE)
     public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
 
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
@@ -161,13 +174,13 @@ public class MainActivity extends ActionBarActivity {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
-            // Will contain the raw JSON response as a string.
+            // This String will contain the raw JSON response as a string.
             String movieJsonStr = null;
 
             final String BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
             final String QUERY_PARAM = "sort_by";
             final String API_PARAM = "api_key";
-            String api_key = "xxx";
+            String api_key = "";
             String sort_by = "";
 
             try {

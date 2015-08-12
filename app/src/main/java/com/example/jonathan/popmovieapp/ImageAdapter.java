@@ -1,7 +1,6 @@
 package com.example.jonathan.popmovieapp;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -47,9 +46,8 @@ public class ImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
-        Log.v("IMAGESGALORE: ", mUrls[position]);
+        //Log.v("IMAGESGALORE: ", mUrls[position]);
         Picasso.with(mContext).load(mUrls[position]).into(imageView);
-        //imageView.setImageResource(mThumbIds[position]);
         return imageView;
     }
 }

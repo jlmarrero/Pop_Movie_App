@@ -7,5 +7,9 @@
     <string name="title_activity_movie_description">MovieDescription</string>
     <string name="base_poster_url">http://image.tmdb.org/t/p/w185</string>
     <string name="BASE_URL_MOVIE">http://api.themoviedb.org/3/discover/movie?</string>
+    <string name="pref_sync">Sort by Popularity</string>
+    <string name="pref_sync_summ">Sort your videos based on popularity. When this box is selected, Pop Movie App will show the most popular movies.</string>
+    <string name="sort_def_value">true</string>
+    <string name="sort_by_key">pref_sync</string>
 
 </resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="PreferenceCategory CheckBoxPreference">
+        <CheckBoxPreference
+            android:key="@string/sort_by_key"
+            android:title="@string/pref_sync"
+            android:summary="@string/pref_sync_summ"
+            android:defaultValue="@string/sort_def_value" />
+    </PreferenceCategory>
+
+
+</PreferenceScreen>
