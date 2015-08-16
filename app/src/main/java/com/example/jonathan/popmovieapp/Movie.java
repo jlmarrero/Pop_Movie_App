@@ -14,8 +14,9 @@ public class Movie implements Parcelable {
     private String poster_path;
     private String release_date;
     private String vote_average;
+    private String backdrop_path;
 
-    public Movie(String ref, String tit, String pop, String desc, String image, String vote, String release){
+    public Movie(String ref, String tit, String pop, String desc, String image, String vote, String release, String backdrop) {
         this.id = ref;
         this.title = tit;
         this.popularity = pop;
@@ -23,6 +24,7 @@ public class Movie implements Parcelable {
         this.poster_path = image;
         this.release_date = release;
         this.vote_average = vote;
+        this.backdrop_path = backdrop;
     }
 
     private Movie(Parcel in){
@@ -33,6 +35,15 @@ public class Movie implements Parcelable {
         poster_path = in.readString();
         release_date = in.readString();
         vote_average = in.readString();
+        backdrop_path = in.readString();
+    }
+
+    public String getBackdrop_path() {
+        return backdrop_path;
+    }
+
+    public void setBackdrop_path(String backdrop_path) {
+        this.backdrop_path = backdrop_path;
     }
 
     public String getRelease_date() {
@@ -105,6 +116,7 @@ public class Movie implements Parcelable {
         out.writeString(poster_path);
         out.writeString(release_date);
         out.writeString(vote_average);
+        out.writeString(backdrop_path);
     }
 
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>(){

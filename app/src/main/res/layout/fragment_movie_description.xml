@@ -7,50 +7,99 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.jonathan.popmovieapp.MovieDescriptionFragment">
+    android:backgroundTint="@color/abc_background_cache_hint_selector_material_dark"
+    tools:context="com.example.jonathan.popmovieapp.MovieDescriptionFragment"
+    android:background="@color/material_blue_grey_900">
 
     <ImageView
         android:id="@+id/descImageView"
         android:layout_width="195dp"
         android:layout_height="195dp"
+        android:maxHeight="195dp"
+        android:maxWidth="195dp"
+        android:src="@drawable/sample_5"
+        android:padding="5dp"
+        android:layout_below="@+id/imageView"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:src="@drawable/sample_4"
+        android:id="@+id/imageView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:maxHeight="185dp"
-        android:maxWidth="185dp"
-        android:src="@drawable/sample_5" />
-
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:paddingBottom="5dp"
+        android:scaleX="1.2"
+        android:scaleY="1.04"
+        android:scaleType="fitXY"
+        android:backgroundTint="@color/background_material_dark" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
-        android:paddingTop="20dp"
-        android:textSize="20sp"
+        android:text="1"
+        android:paddingTop="10dp"
+        android:textSize="22sp"
         android:textIsSelectable="true"
-        android:layout_below="@+id/descImageView"
+        android:backgroundTint="@color/background_material_dark"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:paddingLeft="6dp"
+        android:paddingRight="10dp"
+        android:padding="3dp"
+        android:paddingBottom="6dp"
+        android:layout_alignTop="@+id/descImageView"
+        android:layout_toLeftOf="@+id/textView4"
+        android:layout_toStartOf="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2"
+        android:textSize="17sp"
+        android:padding="5dp"
+        android:backgroundTint="@color/background_material_dark"
+        android:layout_below="@+id/textView3"
+        android:layout_alignLeft="@+id/textView3"
+        android:layout_alignStart="@+id/textView3" />
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+        android:layout_width="220dp"
         android:layout_height="wrap_content"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_alignBottom="@+id/descImageView"
-        android:layout_toEndOf="@+id/descImageView"
-        android:layout_toRightOf="@+id/descImageView" />
+        android:text="TITLE"
+        android:textSize="32sp"
+        android:autoText="false"
+        android:capitalize="words"
+        android:paddingLeft="6dp"
+        android:textColor="#fffffef2"
+        android:layout_above="@+id/descImageView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:background="#727a7a7a" />
 
     <TextView
+        android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/textView4"
-        android:layout_alignTop="@+id/descImageView"
-        android:layout_toRightOf="@+id/descImageView"
-        android:layout_toEndOf="@+id/descImageView"
-        android:textSize="16sp"/>
+        android:text="Small Text"
+        android:textSize="17sp"
+        android:padding="5dp"
+        android:layout_below="@+id/descImageView"
+        android:layout_alignLeft="@+id/descImageView"
+        android:layout_alignStart="@+id/descImageView"
+        android:layout_marginLeft="27dp"
+        android:layout_marginStart="27dp" />
 
 </RelativeLayout>

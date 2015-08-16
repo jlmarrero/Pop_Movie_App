@@ -2,9 +2,7 @@ package com.example.jonathan.popmovieapp;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -18,38 +16,36 @@ import android.preference.PreferenceManager;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends PreferenceActivity
-        implements SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceChangeListener {
-    public static final String KEY_SORT_PREF = "pref_sync";
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_general);
-        bindPreferenceSummaryToValue(findPreference(getString(R.string.sort_by_key)));
     }
 
-    private void bindPreferenceSummaryToValue(Preference preference) {
-        preference.setOnPreferenceChangeListener(this);
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+                                          String key) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        onPreferenceChange(preference, PreferenceManager.getDefaultSharedPreferences(preference.getContext())
-                .getString(preference.getKey(), ""));
-
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(KEY_SORT_PREF)){
-            Preference sortPreference = findPreference(key);
-            sortPreference.setSummary(sharedPreferences.getString(key, ""));
+        if (key.equals(R.string.sort_by_key)) {
+            editor.putString(key, "");
+        } else if (key.equals(R.string.pref_sync_keytwo)) {
+            editor.putString(key, "");
         }
     }
 
     @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
-        if (newValue.equals(KEY_SORT_PREF)){
-            Preference sortPreference = findPreference((CharSequence) newValue);
-            //sortPreference.setSummary(Preferences.getString(newValue, ""));
-        }
-        return true;
+    protected void onResume() {
+        super.onResume();
+        getPreferenceScreen().getSharedPreferences()
+                .registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        getPreferenceScreen().getSharedPreferences()
+                .unregisterOnSharedPreferenceChangeListener(this);
     }
 }

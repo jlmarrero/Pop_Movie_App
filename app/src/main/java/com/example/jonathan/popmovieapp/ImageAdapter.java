@@ -41,12 +41,12 @@ public class ImageAdapter extends BaseAdapter {
             imageView = new ImageView(mContext);
             imageView.setAdjustViewBounds(true);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(2, 2, 2, 2);
+            imageView.setPadding(1, 1, 1, 1);
         } else {
             imageView = (ImageView) convertView;
         }
 
-        //Log.v("IMAGESGALORE: ", mUrls[position]);
+        //Log.v("IMAGES GALORE: ", mUrls[position]);
         Picasso.with(mContext).load(mUrls[position]).into(imageView);
         return imageView;
     }

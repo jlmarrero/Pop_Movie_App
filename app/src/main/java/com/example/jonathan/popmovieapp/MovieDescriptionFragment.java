@@ -25,20 +25,22 @@ public class MovieDescriptionFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-       // inflater.inflate(R.layout.fragment_movie_description, container, false);
 
         View rootView = inflater.inflate(R.layout.fragment_movie_description, container, false);
 
         Bundle b = getActivity().getIntent().getExtras();
 
-        Log.v("THIS BUNDLE: ", b.toString());
+        // Log.v("THIS BUNDLE: ", b.toString());
         Movie movie = b.getParcelable("MOVIE");
 
 
         if(movie == null){
-            Log.v("THIS MOVIE: ", "IS EMPTY!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            Log.v("THIS MOVIE: ", "IS <----- EMPTY ------");
         } else {
-            Log.v("THIS MOVIE ELSE: ", movie.getVote_average());
+            //Log.v("THIS MOVIE BACK: ", movie.getBackdrop_path());
+
+            ImageView image2 = (ImageView) rootView.findViewById(R.id.imageView);
+            Picasso.with(getActivity()).load(movie.getBackdrop_path()).into(image2);
 
             ImageView image = (ImageView) rootView.findViewById(R.id.descImageView);
             Picasso.with(getActivity()).load(movie.getPoster_path()).into(image);
@@ -49,7 +51,11 @@ public class MovieDescriptionFragment extends Fragment {
             ((TextView) rootView.findViewById(R.id.textView2))
                     .setText(movie.getTitle());
 
-            ((TextView) rootView.findViewById(R.id.textView4)).setText("Rating: " + movie.getPopularity());
+            ((TextView) rootView.findViewById(R.id.textView4))
+                    .setText("Rating: " + movie.getVote_average());
+
+            ((TextView) rootView.findViewById(R.id.textView3))
+                    .setText("Release date: " + movie.getRelease_date().toString());
         }
 
         return rootView;

@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,16 +28,30 @@ import java.net.URL;
 
 
 public class MainActivity extends ActionBarActivity {
-    private GridView grid;
     private Movie[] movieList;
+    private GridView gridview;
+    private String Pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        GridView gridview = (GridView) findViewById(R.id.gridview);
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         PreferenceManager.setDefaultValues(getApplication(), R.xml.pref_general, true);
+
+        if (savedInstanceState == null || !savedInstanceState.containsKey("Movies")) {
+            updateMovie();
+            setContentView(R.layout.activity_main);
+            gridview = (GridView) findViewById(R.id.gridview);
+        } else {
+            movieList = (Movie[]) savedInstanceState.getParcelableArray("Movies");
+            String[] urlArray = new String[movieList.length];
+            for (int i = 0; i < movieList.length; i++) {
+                urlArray[i] = movieList[i].getPoster_path();
+            }
+            setContentView(R.layout.activity_main);
+            gridview = (GridView) findViewById(R.id.gridview);
+            ImageAdapter adapter = new ImageAdapter(MainActivity.this, urlArray);
+            gridview.setAdapter(adapter);
+        }
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
@@ -46,8 +61,6 @@ public class MainActivity extends ActionBarActivity {
                 Intent intent = new Intent(getApplication(), MovieDescription.class);
                 Bundle b = new Bundle();
                 b.putParcelable("MOVIE", movieToPass);
-                // Place parcelable inside intent ** Make sure you use the
-                // "MOVIE" string ID when retrieving parcelable
                 intent.putExtras(b);
                 startActivity(intent);
             }
@@ -55,54 +68,35 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    protected void onRestart() {
+        super.onRestart();
         updateMovie();
-    }
-
-    private void updateMovie() {
-        FetchMovieTask updateMovies = new FetchMovieTask();
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean syncConnPref = sharedPref.getBoolean(getString(R.string.pref_sort_by), false);
-
-        Log.v("SHARED PREF: ", String.valueOf(syncConnPref));
-
-        String pref = "";
-        if (syncConnPref){
-            pref = "POPULARITY";
-        } else if(!syncConnPref) {
-            pref = "HIGH_RATING";
-        }
-        updateMovies.execute(pref);
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
         if (id == R.id.action_refresh) {
 
-            //String message = "Refreshing...";
-            //Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
-            //toast.show();
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-            boolean syncConnPref = sharedPref.getBoolean(String.valueOf(SettingsActivity.KEY_SORT_PREF), false);
+            String message = "Saving this action for future functions...";
+            Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+            toast.show();
+
+            //KEEPING FOR FUTURE USE
+
+            /* SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+            boolean syncConnPref = sharedPref.getBoolean(getString(R.string.sort_by_key), true);
             String pref = "";
 
             if (syncConnPref){
@@ -112,10 +106,26 @@ public class MainActivity extends ActionBarActivity {
             }
             FetchMovieTask movieTask = new FetchMovieTask();
             movieTask.execute(pref);
-            return true;
+            return true;*/
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        // save Activity details
+        outState.putParcelableArray("Movies", movieList);
+        outState.putString("Preference", Pref);
+        super.onSaveInstanceState(outState);
+    }
+
+    private void updateMovie() {
+        FetchMovieTask updateMovies = new FetchMovieTask();
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        Pref = sharedPref.getString(getString(R.string.pref_order), getString(R.string.pref_syncConnection_default));
+
+        updateMovies.execute(Pref);
     }
 
     public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
@@ -134,11 +144,17 @@ public class MainActivity extends ActionBarActivity {
 
                 String id = jActualMovie.getString("id");
                 String title = jActualMovie.getString("title");
-                String posterPath = "http://image.tmdb.org/t/p/w185" + jActualMovie.getString("poster_path");
+                String posterPath = getString(R.string.base_poster_path) + jActualMovie.getString("poster_path");
+
+                //Log.v("POSTER: ", posterPath);
+
+                String backdropPath = getString(R.string.base_backdrop_path) + jActualMovie.getString("backdrop_path");
+
+                //Log.v("BACKDROP: ", backdropPath);
 
                 String release = jActualMovie.getString("release_date");
 
-                // Log.v("RELEASE: ", release);
+                //Log.v("RELEASE: ", release);
 
                 String popularity = jActualMovie.getString("popularity");
 
@@ -150,11 +166,10 @@ public class MainActivity extends ActionBarActivity {
 
                 String vote_average = jActualMovie.getString("vote_average");
 
-                Log.v("VOTE: ", vote_average);
+                // Log.v("VOTE: ", vote_average);
 
                 Movie m = new Movie(id, title, popularity, overview, posterPath,
-                        release, vote_average);
-
+                        vote_average, release, backdropPath);
                 // Log.v("Movie Object: ", m.toString());
 
                 movieArray[i] = m;
@@ -177,34 +192,21 @@ public class MainActivity extends ActionBarActivity {
             // This String will contain the raw JSON response as a string.
             String movieJsonStr = null;
 
-            final String BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
-            final String QUERY_PARAM = "sort_by";
-            final String API_PARAM = "api_key";
-            String api_key = "";
-            String sort_by = "";
+            // Log.v("Param in DIB: ", params[0].toString());
 
             try {
-                if (params[0] == null) {
-                    return null;
-                } else if (params[0] == "POPULARITY") {
-                    sort_by = "popularity.desc";
-                    Log.v("SORT PARAM: ", sort_by);
-                } else if (params[0] == "HIGH_RATING") {
-                    sort_by = "vote_average.desc";
-                    Log.v("SORT PARAM: ", sort_by);
-                }
-
-
-                Uri buildUri = Uri.parse(BASE_URL).buildUpon()
-                        .appendQueryParameter(QUERY_PARAM, sort_by)
-                        .appendQueryParameter(API_PARAM, api_key)
+                Uri buildUri = Uri.parse(getString(R.string.BASE_URL_MOVIE)).buildUpon()
+                        .appendQueryParameter(getString(R.string.primary_release_year), getString(R.string.year_param))
+                        .appendQueryParameter(getString(R.string.cert_country), getString(R.string.search_country_param))
+                        .appendQueryParameter(getString(R.string.query_param), params[0])
+                        .appendQueryParameter(getString(R.string.api_param), getString(R.string.api_key))
                         .build();
 
                 URL url = new URL(buildUri.toString());
 
                 Log.v("MY NEW URL: ", url.toString());
 
-                // Create the request to OpenWeatherMap, and open the connection
+                // Create the request to MDB, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -231,7 +233,7 @@ public class MainActivity extends ActionBarActivity {
                     movieJsonStr = null;
                 }
                 movieJsonStr = buffer.toString();
-                Log.v("JSON Sample: ", movieJsonStr);
+                // Log.v("JSON Sample: ", movieJsonStr);
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -271,19 +273,14 @@ public class MainActivity extends ActionBarActivity {
                 Log.v("MORE JSON: ", result[0].toString());
                 movieList = result;
                 for (int i = 0; i < movieList.length; i++) {
-
                     urlArray[i] = movieList[i].getPoster_path();
                 }
-
-                Log.v("URL STRING3: ", urlArray[0]);
-
-                grid = (GridView) findViewById(R.id.gridview);
+                // Log.v("URL STRING3: ", urlArray[0]);
+                GridView grid = (GridView) findViewById(R.id.gridview);
                 ImageAdapter adapter = new ImageAdapter(MainActivity.this, urlArray);
                 grid.setAdapter(adapter);
 
             }
         }
-
     }
-
 }
