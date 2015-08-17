@@ -28,9 +28,7 @@ public class SettingsActivity extends PreferenceActivity
                                           String key) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        if (key.equals(R.string.sort_by_key)) {
-            editor.putString(key, "");
-        } else if (key.equals(R.string.pref_sync_keytwo)) {
+        if (key.equals(R.string.pref_sync_keytwo)) {
             editor.putString(key, "");
         }
     }

@@ -144,13 +144,23 @@ public class MainActivity extends ActionBarActivity {
 
                 String id = jActualMovie.getString("id");
                 String title = jActualMovie.getString("title");
-                String posterPath = getString(R.string.base_poster_path) + jActualMovie.getString("poster_path");
+                String posterPath = "";
+                String backdropPath = "";
 
-                //Log.v("POSTER: ", posterPath);
+                if (jActualMovie.getString("poster_path") == "null"){
+                    posterPath = "empty";
+                }  else {
+                    posterPath = getString(R.string.base_poster_path) + jActualMovie.getString("poster_path");
+                }
+                Log.v("POSTER: ", posterPath);
 
-                String backdropPath = getString(R.string.base_backdrop_path) + jActualMovie.getString("backdrop_path");
+                if (jActualMovie.getString("backdrop_path") == "null"){
+                    backdropPath = "empty";
+                }  else {
+                    backdropPath = getString(R.string.base_backdrop_path) + jActualMovie.getString("backdrop_path");
+                }
 
-                //Log.v("BACKDROP: ", backdropPath);
+                Log.v("BACKDROP: ", backdropPath);
 
                 String release = jActualMovie.getString("release_date");
 

@@ -46,8 +46,14 @@ public class ImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
-        //Log.v("IMAGES GALORE: ", mUrls[position]);
-        Picasso.with(mContext).load(mUrls[position]).into(imageView);
+        // Check to see if post file exists. If not, replace with default image
+        String checker = "empty";
+        if (mUrls[position] == checker){
+            Picasso.with(mContext).load(R.drawable.ic_insert_photo_black_24dp).into(imageView);
+        } else {
+            Picasso.with(mContext).load(mUrls[position]).into(imageView);
+        }
+
         return imageView;
     }
 }

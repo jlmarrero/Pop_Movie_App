@@ -27,7 +27,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="240dp"
-        android:src="@drawable/sample_4"
+        android:src="@drawable/ic_insert_photo_black_24dp"
         android:id="@+id/imageView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
